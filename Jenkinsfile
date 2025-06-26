@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  environment {
+    KUBECONFIG = '/root/.kube/config'
+  }
   stages {
     stage('Build Docker in Minikube') {
       steps {
