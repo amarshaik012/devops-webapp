@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  environment {
+    KUBECONFIG = '/var/jenkins_home/.kube/config'
+  }
+
   stages {
     stage('Build Docker Image') {
       steps {
@@ -8,10 +12,8 @@ pipeline {
       }
     }
 
-    stage('Configure Kubeconfig') {
+    stage('Check Cluster Info') {
       steps {
-        sh 'mkdir -p $HOME/.kube'
-        sh 'cp /tmp/kubeconfig.yaml $HOME/.kube/config'
         sh 'kubectl config use-context minikube'
         sh 'kubectl cluster-info'
       }
