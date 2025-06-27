@@ -1,15 +1,12 @@
 pipeline {
     agent any
 
-    environment {
-        KUBECONFIG = "${HOME}/.kube/config"
-    }
-
-   stage('Clone') {
-    steps {
-        git branch: 'main', url: 'https://github.com/amarshaik012/devops-webapp.git'
-    }
-}
+    stages {
+        stage('Clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/amarshaik012/devops-webapp.git'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
