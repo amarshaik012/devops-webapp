@@ -5,12 +5,11 @@ pipeline {
         KUBECONFIG = "${HOME}/.kube/config"
     }
 
-    stages {
-        stage('Clone') {
-            steps {
-                git 'https://github.com/amarshaik012/devops-webapp.git'
-            }
-        }
+   stage('Clone') {
+    steps {
+        git branch: 'main', url: 'https://github.com/amarshaik012/devops-webapp.git'
+    }
+}
 
         stage('Build Docker Image') {
             steps {
