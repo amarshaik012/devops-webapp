@@ -1,11 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+<<<<<<< HEAD
   name: devops-webapp
+=======
+  name: nginx-deployment
+>>>>>>> ad3f53c (✅ Update Jenkinsfile and kubeconfig)
 spec:
   replicas: 1
   selector:
     matchLabels:
+<<<<<<< HEAD
       app: devops-webapp
   template:
     metadata:
@@ -17,3 +22,16 @@ spec:
         image: amar0126/devops-webapp:latest
         ports:
         - containerPort: 3000
+=======
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+>>>>>>> ad3f53c (✅ Update Jenkinsfile and kubeconfig)
