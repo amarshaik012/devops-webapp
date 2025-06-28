@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = "amar0126"  // ✅ Correct Docker Hub username
+        DOCKER_USER = "amar0126" // ✅ Your correct DockerHub username
         IMAGE_NAME = "${DOCKER_USER}/devops-webapp:latest"
     }
 
@@ -24,7 +24,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 withCredentials([string(credentialsId: 'docker-hub-pass', variable: 'DOCKER_PASS')]) {
-                    echo "📤 Pushing Docker image to Docker Hub..."
+                    echo "📤 Logging in and pushing Docker image..."
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                     sh 'docker push $IMAGE_NAME'
                 }
@@ -39,24 +39,24 @@ pipeline {
             }
         }
 
-        stage('Update Image in Deployment') {
+        stage('Update Deployment Manifest') {
             steps {
-                echo "📝 Updating image in deployment manifest..."
+                echo "📝 Updating image name in Kubernetes manifest..."
                 sh 'sed -i "s|image:.*|image: $IMAGE_NAME|g" k8s/deployment.yaml'
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                echo "🚀 Deploying updated manifest to Kubernetes..."
+                echo "🚀 Deploying to Kubernetes..."
                 sh 'kubectl apply -f k8s/deployment.yaml'
                 sh 'kubectl rollout status deployment/nodeapp-deployment'
             }
         }
 
-        stage('Verify Pods') {
+        stage('Check Pods') {
             steps {
-                echo "🔍 Verifying running pods..."
+                echo "🔍 Verifying pod status..."
                 sh 'kubectl get pods -o wide'
             }
         }
@@ -64,10 +64,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Deployment completed successfully!'
+            echo '✅ Deployment successful!'
         }
         failure {
-            echo '❌ Pipeline failed.'
+            echo '❌ Deployment failed. Check the logs above.'
         }
     }
 }
