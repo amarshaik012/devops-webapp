@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = "amar0126"
-        IMAGE_NAME = "${DOCKER_USER}/nodeapp:${BUILD_NUMBER}"
+        DOCKER_USER = "amarshaik012"  // Updated Docker Hub username
+        IMAGE_NAME = "${DOCKER_USER}/devops-webapp:${BUILD_NUMBER}"  // Updated image name
     }
 
     stages {
