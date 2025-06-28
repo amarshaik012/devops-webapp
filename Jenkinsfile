@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = "amarshaik012"  // Updated Docker Hub username
-        IMAGE_NAME = "${DOCKER_USER}/devops-webapp:${BUILD_NUMBER}"  // Updated image name
+        DOCKER_USER = "amar0126"
+        IMAGE_NAME = "${DOCKER_USER}/devops-webapp:${BUILD_NUMBER}"
     }
 
     stages {
@@ -24,7 +24,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 withCredentials([string(credentialsId: 'docker-hub-pass', variable: 'DOCKER_PASS')]) {
-                    echo "📤 Pushing Docker image to Docker Hub..."
+                    echo "📤 Logging in and pushing image to Docker Hub..."
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                     sh 'docker push $IMAGE_NAME'
                 }
@@ -48,7 +48,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                echo "🚀 Deploying updated manifest to Kubernetes..."
+                echo "🚀 Deploying to Kubernetes..."
                 sh 'kubectl apply -f k8s/deployment.yaml'
                 sh 'kubectl rollout status deployment/nodeapp-deployment'
             }
@@ -67,7 +67,7 @@ pipeline {
             echo '✅ Deployment completed successfully!'
         }
         failure {
-            echo '❌ Deployment failed. Please check the logs.'
+            echo '❌ Deployment failed. Check logs for details.'
         }
     }
 }
