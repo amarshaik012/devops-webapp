@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "nodeapp:${BUILD_NUMBER}"
+        DOCKER_USER = "amar0126"
+        IMAGE_NAME = "${DOCKER_USER}/nodeapp:${BUILD_NUMBER}"
     }
 
     stages {
@@ -20,9 +21,19 @@ pipeline {
             }
         }
 
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([string(credentialsId: 'docker-hub-pass', variable: 'DOCKER_PASS')]) {
+                    echo "📤 Pushing Docker image to Docker Hub..."
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push $IMAGE_NAME'
+                }
+            }
+        }
+
         stage('Validate Kubernetes Access') {
             steps {
-                echo "🔐 Validating Kubernetes cluster..."
+                echo "🔐 Validating Kubernetes cluster access..."
                 sh 'kubectl version --short'
                 sh 'kubectl cluster-info'
             }
@@ -37,7 +48,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                echo "🚀 Deploying to Kubernetes..."
+                echo "🚀 Deploying updated manifest to Kubernetes..."
                 sh 'kubectl apply -f k8s/deployment.yaml'
                 sh 'kubectl rollout status deployment/nodeapp-deployment'
             }
@@ -45,7 +56,7 @@ pipeline {
 
         stage('Verify Pods') {
             steps {
-                echo "🔍 Verifying deployed pods..."
+                echo "🔍 Verifying running pods..."
                 sh 'kubectl get pods -o wide'
             }
         }
@@ -53,10 +64,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Deployment complete!'
+            echo '✅ Deployment completed successfully!'
         }
         failure {
-            echo '❌ Build failed!'
+            echo '❌ Deployment failed. Please check the logs.'
         }
     }
 }
