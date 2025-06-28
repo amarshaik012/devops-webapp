@@ -2,35 +2,42 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "nodeapp:latest"
+        IMAGE_NAME = "nodeapp:${BUILD_NUMBER}"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                echo "Cloning repo..."
+                echo "🔄 Cloning repository..."
                 git branch: 'main', url: 'https://github.com/amarshaik012/devops-webapp.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo "Building Docker image..."
+                echo "🐳 Building Docker image..."
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Validate Kubernetes Access') {
             steps {
-                echo "Checking Kubernetes cluster status..."
+                echo "🔐 Validating Kubernetes cluster..."
                 sh 'kubectl version --short'
                 sh 'kubectl cluster-info'
             }
         }
 
+        stage('Update Image in Deployment') {
+            steps {
+                echo "📝 Updating image in deployment manifest..."
+                sh 'sed -i "s|image:.*|image: $IMAGE_NAME|g" k8s/deployment.yaml'
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
-                echo "Applying Kubernetes manifest..."
+                echo "🚀 Deploying to Kubernetes..."
                 sh 'kubectl apply -f k8s/deployment.yaml'
                 sh 'kubectl rollout status deployment/nodeapp-deployment'
             }
@@ -38,18 +45,18 @@ pipeline {
 
         stage('Verify Pods') {
             steps {
-                echo "Listing pods to verify deployment..."
+                echo "🔍 Verifying deployed pods..."
                 sh 'kubectl get pods -o wide'
             }
         }
     }
 
     post {
-        failure {
-            echo '❌ Build failed!'
-        }
         success {
             echo '✅ Deployment complete!'
+        }
+        failure {
+            echo '❌ Build failed!'
         }
     }
 }
