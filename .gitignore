@@ -1,1 +1,7 @@
 .terraform/
+node_modules/
+jenkins_home/
+*.log
+*.pem
+*.crt
+*.key
