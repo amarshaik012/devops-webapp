@@ -1,20 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nodeapp-deployment
+  name: devops-webapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nodeapp
+      app: devops-webapp
   template:
     metadata:
       labels:
-        app: nodeapp
+        app: devops-webapp
     spec:
       containers:
-        - name: nodeapp
-          image: nodeapp:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 3000
+      - name: devops-webapp
+        image: amar0126/devops-webapp:latest
+        ports:
+        - containerPort: 3000
