@@ -1,2 +1,7 @@
 node_modules
-npm-debug.log
+jenkins_home
+*.log
+*.pem
+*.crt
+*.key
+
